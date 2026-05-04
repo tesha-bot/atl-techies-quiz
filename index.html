@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ATL Techies — Who Are We?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --surface2: #1c1c26;
+      --border: #2a2a38;
+      --accent: #7c6af7;
+      --accent-dim: #3d3578;
+      --accent-glow: rgba(124,106,247,0.18);
+      --green: #3dd68c;
+      --green-dim: #1a4d36;
+      --red: #f7706a;
+      --red-dim: #4d1f1d;
+      --text: #f0f0f8;
+      --text-muted: #8888aa;
+      --text-dim: #55556a;
+      --a: #7ec8f7;
+      --b: #f7c87e;
+      --c: #3dd68c;
+      --d: #f7706a;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 48px;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse at center, rgba(124,106,247,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    .site-header .eyebrow {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .site-header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .site-header h1 span { color: var(--accent); }
+    .site-header .sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    /* ── INTRO ── */
+    #intro-screen { animation: fadeUp 0.4s ease both; }
+    .stat-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 24px 0 28px;
+    }
+    .stat-pill {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-pill .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 15px;
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 0 24px rgba(124,106,247,0.3);
+    }
+    .btn-primary:hover {
+      background: #6a58e8;
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(124,106,247,0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ── QUESTION SCREEN ── */
+    #question-screen { animation: fadeUp 0.3s ease both; display: none; }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .q-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .score-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .progress-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+    }
+
+    /* Person card */
+    .person-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border);
+    }
+    .person-details { flex: 1; min-width: 0; }
+    .person-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .person-company {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .person-tagline {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 3px;
+      font-style: italic;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .question-text {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.55;
+      margin-bottom: 18px;
+    }
+
+    /* Options */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .opt-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 13px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.45;
+      transition: border-color 0.12s, background 0.12s;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .opt-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .opt-btn:disabled { cursor: default; }
+    .opt-letter {
+      width: 22px; height: 22px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .opt-a .opt-letter { background: rgba(126,200,247,0.15); color: var(--a); }
+    .opt-b .opt-letter { background: rgba(247,200,126,0.15); color: var(--b); }
+    .opt-c .opt-letter { background: rgba(61,214,140,0.15); color: var(--c); }
+    .opt-d .opt-letter { background: rgba(247,112,106,0.15); color: var(--d); }
+
+    .opt-btn.correct {
+      background: rgba(61,214,140,0.08);
+      border-color: var(--green);
+    }
+    .opt-btn.correct .opt-letter {
+      background: var(--green);
+      color: #0a1f14;
+    }
+    .opt-btn.wrong {
+      background: rgba(247,112,106,0.08);
+      border-color: var(--red);
+    }
+    .opt-btn.wrong .opt-letter {
+      background: var(--red);
+      color: #1f0a0a;
+    }
+
+    /* Feedback */
+    .feedback {
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .feedback.correct {
+      display: block;
+      background: rgba(61,214,140,0.08);
+      border: 1px solid rgba(61,214,140,0.3);
+      color: var(--green);
+    }
+    .feedback.wrong {
+      display: block;
+      background: rgba(247,112,106,0.08);
+      border: 1px solid rgba(247,112,106,0.3);
+      color: var(--red);
+    }
+    .feedback strong { font-weight: 600; }
+
+    .btn-next {
+      display: none;
+      width: 100%;
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      border-radius: var(--radius-sm);
+      padding: 13px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-next:hover {
+      background: var(--accent-glow);
+      border-color: var(--accent);
+    }
+
+    /* ── RESULTS ── */
+    #results-screen { display: none; animation: fadeUp 0.4s ease both; }
+    .results-header { text-align: center; margin-bottom: 24px; }
+    .results-header .eyebrow {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .big-score {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(56px, 14vw, 80px);
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+      text-shadow: 0 0 40px rgba(124,106,247,0.4);
+    }
+    .grade-tag {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 999px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 8px;
+    }
+    .breakdown {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-label { color: var(--text-muted); }
+    .breakdown-value { font-family: 'Syne', sans-serif; font-weight: 600; color: var(--text); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 420px) {
+      .options-grid { grid-template-columns: 1fr; }
+      .opt-btn { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="eyebrow">ATL Techies · Internal Quiz</div>
+    <h1>Who Are <span>We?</span></h1>
+    <p class="sub">Match names, companies, taglines, and facts.<br>How well do you know the group?</p>
+  </header>
+
+  <!-- INTRO -->
+  <div id="intro-screen" class="card">
+    <div class="stat-row">
+      <div class="stat-pill"><span class="dot"></span>15 questions</div>
+      <div class="stat-pill"><span class="dot"></span>4 choices each</div>
+      <div class="stat-pill"><span class="dot"></span>Instant feedback</div>
+      <div class="stat-pill"><span class="dot"></span>Reshuffles every round</div>
+    </div>
+    <button class="btn-primary" onclick="startGame()">Start Quiz →</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="question-screen">
+    <div class="top-bar">
+      <span class="q-label" id="q-label">Question 1 of 15</span>
+      <span class="score-badge">Score: <span id="score-num">0</span></span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="person-card">
+      <div class="avatar" id="avatar"></div>
+      <div class="person-details">
+        <div class="person-name" id="person-name"></div>
+        <div class="person-company" id="person-company"></div>
+        <div class="person-tagline" id="person-tagline"></div>
+      </div>
+    </div>
+    <div class="question-text" id="question-text"></div>
+    <div class="options-grid" id="options-grid"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next question →</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen">
+    <div class="card">
+      <div class="results-header">
+        <div class="eyebrow">Results</div>
+        <div class="big-score" id="big-score"></div>
+        <div style="font-size:14px;color:var(--text-muted)" id="score-sub"></div>
+        <div class="grade-tag" id="grade-tag"></div>
+      </div>
+      <div class="breakdown" id="breakdown"></div>
+      <button class="btn-primary" onclick="restartGame()">Play Again →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PEOPLE = [
+  { name:"Gary Gillespie", company:"Rhodium Systems", tagline:"IT Applications That Give You Control", fact:"Worked with the Astronaut Office at Johnson Space Center, rode the Goodyear Blimp, and is a scuba diver." },
+  { name:"Dan Hamon", company:"Tech Exec LLC", tagline:"A Techie That Speaks Human", fact:"Has visited 40 countries across 6 continents." },
+  { name:"Roderick Ricks", company:"MP Group", tagline:"Putting The Focus Back On What Matters: The Client", fact:"Won 46 baseball games in a row and had a podcast called 'Burn the Ship' for business owners." },
+  { name:"James Wright", company:"Executive IT", tagline:"", fact:"Hiked through New Zealand and is a scouts leader involved in troop formation." },
+  { name:"Brandon Bowman", company:"Brandon's Cloud", tagline:"", fact:"Writes left-handed but does everything else right-handed, and spoke French as a child." },
+  { name:"Daphne Anderson", company:"WSI World", tagline:"Digital Daphne", fact:"As a child, her mother brought her to work at Brown University so she could play Star Trek computer games on a mainframe." },
+  { name:"David Doerrier", company:"Present Your Way to Success", tagline:"Talking and Telling Ain't Training or Selling!", fact:"Owns an online radio station called CLIRadio.com — CLI stands for Classic Long Island. Also plays Santa Claus." },
+  { name:"Scott Self", company:"SMS | ITC", tagline:"IT Solutions That Work, When You Need Them", fact:"Met his wife in Qatar, met Robin Williams in Iraq, and his C-17 plane was shot at in Afghanistan." },
+  { name:"Jesse Long", company:"AOT", tagline:"Bigger Isn't Better, Better Is Better", fact:"Born at Piedmont Hospital in Downtown Atlanta — just like his two children." },
+  { name:"Samir Black", company:"Forseti Verify", tagline:"Call me when you get a ransomware letter — before you call the FBI", fact:"Is a competitive magician." },
+  { name:"Rob Drake", company:"Synchronize IT Solutions", tagline:"Technology should work for your business, not against it", fact:"Rode in an Olympic bobsled, coached football, and his grandparents are from Berlin, Germany." },
+  { name:"Richard Stokes", company:"Network 1 Consulting", tagline:"", fact:"His first spoken words were in Japanese, his grandfather was the first person to fly off an aircraft carrier in WWI, and he met Queen Elizabeth II." },
+  { name:"Lisa Leff", company:"Connect Recruiters", tagline:"", fact:"Is an identical triplet — if you see her, it may not actually be her." },
+  { name:"Bret Kempler", company:"Kempler Consulting", tagline:"No batch and blast email", fact:"Is learning acoustic guitar and has 2 metal plates in his body. His dad was an ER doctor." },
+  { name:"Tracy Herter", company:"The Ragnar Group Inc.", tagline:"", fact:"Was a former figure skater and worked at Muzak." },
+  { name:"Nigel Long", company:"Kingfisher Cloud Consulting LLC", tagline:"", fact:"Is a fitness nut, a handstand push-up virtuoso, and has touched 6 of 7 continents." },
+  { name:"Peter Baron", company:"Carabiner Communications", tagline:"", fact:"Flew in a hot air balloon over the Valley of the Kings in Egypt." },
+  { name:"Jim McNamara", company:"8 Penny Labs", tagline:"", fact:"Enjoys photography, plays guitar, and played hockey." },
+  { name:"Shawn Yates", company:"", tagline:"Helps get sh*t out the door", fact:"Shot himself with a bow and arrow. His work tools include a laser cutter, CNC machine, and 3D printer." },
+  { name:"Glenn Rudh", company:"", tagline:"", fact:"Has parents from Sweden and can read IKEA labels properly." },
+  { name:"John Hagan", company:"", tagline:"", fact:"Played drums and voiced radio commercials." },
+  { name:"Eric Holtzclaw", company:"", tagline:"", fact:"Owns a bright orange Jeep and is a recovering technologist." },
+  { name:"Reade Milner", company:"", tagline:"", fact:"Grew up on a cattle farm spanning 360 acres." },
+  { name:"Stephen Stull", company:"", tagline:"", fact:"Met Mr. T from the A-Team." },
+  { name:"Hitesh Patel", company:"", tagline:"", fact:"Born in East Africa, went to college in the UK, and lived in Melbourne, Australia." },
+  { name:"Gerardo Kerik", company:"", tagline:"", fact:"Born in Argentina, grew up in Mexico, lived in London, and has been in Georgia for 20 years." },
+  { name:"Collin Shippee", company:"", tagline:"", fact:"Sailed across the Atlantic Ocean for 14 days." },
+  { name:"Juan Isacura", company:"", tagline:"", fact:"Has appeared in 10 soap operas as an extra." },
+  { name:"Frank Keith", company:"", tagline:"Turning AI Potential Into Business Performance", fact:"Is a trail runner and was formerly a rugby player." },
+  { name:"Shawn Lally", company:"", tagline:"BizPayPros — Where Businesses Transact", fact:"Has been to games at 25 of 30 MLB stadiums." },
+  { name:"William Morse", company:"", tagline:"", fact:"Has set foot in 49 of the 50 US states." },
+  { name:"Jim Stansell", company:"", tagline:"", fact:"His father worked on the Apollo missions, Vandenberg, and the Space Shuttle program." },
+  { name:"Scott Williams", company:"", tagline:"", fact:"Has set foot on the South Polar Ice Cap and has a houseboat on Lake Lanier." },
+  { name:"Brian Haney", company:"Know Your Data", tagline:"", fact:"Got married in a church built in the 1400s in Budapest, Hungary — a church that survived two World Wars." },
+  { name:"Joseph Powell", company:"", tagline:"", fact:"Is a piano and tennis player and holds 3 patents." },
+  { name:"Sam Norris", company:"", tagline:"", fact:"Introduced President George H.W. Bush when he was high school valedictorian and studied in Russia." },
+  { name:"Troy Cobb", company:"", tagline:"", fact:"Played college football." },
+  { name:"Jordan Ledwell", company:"Technical Elements", tagline:"", fact:"Worked at a church ministry and enjoys zip-lining — a true outdoors person." },
+  { name:"Tarun Kurma", company:"Stable Kernel", tagline:"", fact:"Has 4 motorcycles and loves riding. Does one international trip per year — heading to Albania in 2026." },
+  { name:"Lynette Furr", company:"", tagline:"", fact:"Visits beaches all over the world just to listen to the sounds of the water." },
+  { name:"Trenelle Pierce", company:"", tagline:"Be a river, not a reservoir", fact:"In 2024, both of her grandmothers turned 85 years old in the same year." },
+];
+
+const AVATAR_COLORS = [
+  {bg:'#1e1a3d',text:'#a89cf7'},{bg:'#0f2a20',text:'#3dd68c'},
+  {bg:'#2a1010',text:'#f7706a'},{bg:'#1a1f2e',text:'#7ec8f7'},
+  {bg:'#2a1a0a',text:'#f7c87e'},{bg:'#1a0a1e',text:'#d68cf7'},
+  {bg:'#0a1e1a',text:'#6af7d6'},{bg:'#1e1a0a',text:'#f7e46a'}
+];
+
+const Q_TYPES = [
+  (p, all) => ({
+    q: `Which of these is true about ${p.name}?`,
+    correct: p.fact,
+    pool: all.filter(x=>x.name!==p.name).map(x=>x.fact).filter(Boolean)
+  }),
+  (p, all) => p.company ? ({
+    q: `Which company does ${p.name} represent?`,
+    correct: p.company,
+    pool: all.filter(x=>x.name!==p.name&&x.company).map(x=>x.company)
+  }) : null,
+  (p, all) => p.tagline ? ({
+    q: `Which tagline belongs to ${p.name}?`,
+    correct: p.tagline,
+    pool: all.filter(x=>x.name!==p.name&&x.tagline).map(x=>x.tagline)
+  }) : null,
+  (p, all) => ({
+    q: `Who does this describe?\n"${p.fact}"`,
+    correct: p.name,
+    pool: all.filter(x=>x.name!==p.name).map(x=>x.name)
+  }),
+];
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function pick(a,n){return shuffle(a).slice(0,n);}
+
+function buildQuestions(n=15){
+  const eligible=PEOPLE.filter(p=>p.fact);
+  const pool=shuffle(eligible).slice(0,n+5);
+  const qs=[];
+  for(const p of pool){
+    const types=Q_TYPES.map(fn=>fn(p,eligible)).filter(Boolean);
+    const t=types[Math.floor(Math.random()*types.length)];
+    const wrongs=pick(t.pool.filter(d=>d&&d!==t.correct),3);
+    if(wrongs.length<3)continue;
+    qs.push({person:p,question:t.q,options:shuffle([t.correct,...wrongs]),correct:t.correct});
+    if(qs.length>=n)break;
+  }
+  return qs;
+}
+
+let questions=[],current=0,score=0,answered=false;
+
+function getInitials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+
+function startGame(){
+  questions=buildQuestions(15);current=0;score=0;
+  document.getElementById('intro-screen').style.display='none';
+  const qs=document.getElementById('question-screen');
+  qs.style.display='block';qs.style.animation='fadeUp 0.3s ease both';
+  showQuestion();
+}
+
+function showQuestion(){
+  answered=false;
+  const q=questions[current],p=q.person,total=questions.length;
+  document.getElementById('q-label').textContent=`Question ${current+1} of ${total}`;
+  document.getElementById('score-num').textContent=score;
+  document.getElementById('progress-fill').style.width=`${(current/total)*100}%`;
+
+  const col=AVATAR_COLORS[current%AVATAR_COLORS.length];
+  const av=document.getElementById('avatar');
+  av.textContent=getInitials(p.name);
+  av.style.background=col.bg;av.style.color=col.text;
+
+  document.getElementById('person-name').textContent=p.name;
+  document.getElementById('person-company').textContent=p.company||'';
+  document.getElementById('person-tagline').textContent=p.tagline||'';
+  document.getElementById('question-text').textContent=q.question;
+
+  const letters=['A','B','C','D'],classes=['opt-a','opt-b','opt-c','opt-d'];
+  const grid=document.getElementById('options-grid');grid.innerHTML='';
+  q.options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className=`opt-btn ${classes[i]}`;
+    btn.innerHTML=`<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick=()=>selectAnswer(opt,btn);
+    grid.appendChild(btn);
+  });
+
+  const fb=document.getElementById('feedback');
+  fb.className='feedback';fb.textContent='';
+  document.getElementById('btn-next').style.display='none';
+}
+
+function selectAnswer(chosen,btn){
+  if(answered)return;answered=true;
+  const q=questions[current],isCorrect=chosen===q.correct;
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    b.disabled=true;
+    const label=b.querySelector('span:last-child').textContent;
+    if(label===q.correct)b.classList.add('correct');
+    else if(b===btn&&!isCorrect)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  if(isCorrect){
+    score++;document.getElementById('score-num').textContent=score;
+    fb.className='feedback correct';
+    fb.innerHTML=`<strong>Correct!</strong> ${q.correct}`;
+  } else {
+    fb.className='feedback wrong';
+    fb.innerHTML=`<strong>Not quite.</strong> The answer was: ${q.correct}`;
+  }
+  document.getElementById('btn-next').style.display='block';
+}
+
+function nextQuestion(){
+  current++;
+  if(current>=questions.length){showResults();return;}
+  showQuestion();
+}
+
+function showResults(){
+  document.getElementById('question-screen').style.display='none';
+  const rs=document.getElementById('results-screen');
+  rs.style.display='block';rs.style.animation='fadeUp 0.4s ease both';
+  const pct=Math.round((score/questions.length)*100);
+  document.getElementById('big-score').textContent=pct+'%';
+  document.getElementById('score-sub').textContent=`${score} of ${questions.length} correct`;
+
+  let grade,gradeStyle;
+  if(pct>=90){grade='ATL Techie Legend';gradeStyle='background:rgba(61,214,140,0.15);color:#3dd68c;border:1px solid rgba(61,214,140,0.3)';}
+  else if(pct>=70){grade='Solid Networker';gradeStyle='background:rgba(126,200,247,0.15);color:#7ec8f7;border:1px solid rgba(126,200,247,0.3)';}
+  else if(pct>=50){grade='Getting There';gradeStyle='background:rgba(247,200,126,0.15);color:#f7c87e;border:1px solid rgba(247,200,126,0.3)';}
+  else{grade='Time to Mingle More';gradeStyle='background:rgba(247,112,106,0.15);color:#f7706a;border:1px solid rgba(247,112,106,0.3)';}
+
+  document.getElementById('grade-tag').textContent=grade;
+  document.getElementById('grade-tag').style.cssText+=gradeStyle;
+
+  document.getElementById('breakdown').innerHTML=`
+    <div class="breakdown-row"><span class="breakdown-label">Correct answers</span><span class="breakdown-value">${score} / ${questions.length}</span></div>
+    <div class="breakdown-row"><span class="breakdown-label">Accuracy</span><span class="breakdown-value">${pct}%</span></div>
+    <div class="breakdown-row"><span class="breakdown-label">Status</span><span class="breakdown-value">${grade}</span></div>
+  `;
+}
+
+function restartGame(){
+  document.getElementById('results-screen').style.display='none';
+  document.getElementById('intro-screen').style.display='block';
+}
+</script>
+</body>
+</html>
